@@ -139,6 +139,12 @@ Signed, hash-chained audit log ("Chain integrity: verified"):
 
 This repo is packaged as a reusable Cognee incident-memory example. A PR to [`topoteretes/cognee`](https://github.com/topoteretes/cognee) / [`cognee-integrations`](https://github.com/topoteretes/cognee-integrations) is eligible for the separate $100/PR top-20 track (comment on an issue and wait for assignment first; max 5 PRs/person).
 
+## Limitations & roadmap
+
+For an honest accounting of what is real vs. placeholder/simulated (data
+connectors, LLM synthesis, action execution, persistence, auth, etc.) and what is
+yet to be built, see [LIMITATIONS.md](LIMITATIONS.md).
+
 ## License
 
 Apache-2.0 (matching Cognee).
