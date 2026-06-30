@@ -1,0 +1,49 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: ${DB_USERNAME:-cognee}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-cognee}
+      POSTGRES_DB: ${DB_NAME:-cognee_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-cognee} -d ${DB_NAME:-cognee_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    env_file:
+      - .env
+    environment:
+      DB_HOST: postgres
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - cogneedata:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Optional graph backend for nicer demo visuals: docker compose --profile neo4j up
+  neo4j:
+    image: neo4j:5
+    profiles: ["neo4j"]
+    environment:
+      NEO4J_AUTH: neo4j/${GRAPH_DATABASE_PASSWORD:-cognee_graph}
+      NEO4J_PLUGINS: '["apoc"]'
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4jdata:/data
+
+volumes:
+  pgdata:
+  cogneedata:
+  neo4jdata:

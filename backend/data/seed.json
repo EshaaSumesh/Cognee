@@ -1,0 +1,38 @@
+{
+  "runbooks": [
+    {
+      "source": "runbook:payments-db",
+      "kind": "runbook",
+      "text": "Runbook: payments-api 5xx spike. Symptom: elevated 500s on /charge, latency p99 > 2s. Likely cause: payments-db connection pool exhaustion after deploy. Fix: scale the pgbouncer pool from 20 to 60 and restart payments-api pods; remediation confirmed in prior incidents. Owner: payments-team."
+    },
+    {
+      "source": "runbook:checkout-cache",
+      "kind": "runbook",
+      "text": "Runbook: checkout cache stampede. Symptom: redis CPU 100%, cart reads timing out. Likely cause: cache key expiry storm on flash sales. Fix: enable request coalescing and stagger TTL jitter; remediation: warm cache before sale windows. Owner: checkout-team."
+    }
+  ],
+  "incidents": [
+    {
+      "source": "INC-001",
+      "kind": "incident",
+      "text": "INC-001 (SEV2) payments-api: 5xx spike on /charge after the 14:02 deploy. Investigation took 47 minutes. Root cause: payments-db connection pool exhaustion introduced by PR-482 which raised concurrency. Fix: scaled pgbouncer pool 20 -> 60 and rolled payments-api. Resolved. Related: github:PR-482, runbook:payments-db."
+    },
+    {
+      "source": "INC-001-postmortem",
+      "kind": "postmortem",
+      "text": "Postmortem INC-001: The 5xx spike on payments-api was caused by connection pool exhaustion. Root cause: PR-482 increased worker concurrency without raising the pgbouncer pool size. Action items: add pool-size check to deploy gate; document in runbook:payments-db. Time to resolve: 47m."
+    }
+  ],
+  "events": [
+    {
+      "source": "github:PR-482",
+      "kind": "event",
+      "text": "github:PR-482 'increase payments worker concurrency 4 -> 16' merged 13:58 by alice. Touches payments-api worker config. No pool-size change."
+    },
+    {
+      "source": "sentry:PAY-9921",
+      "kind": "event",
+      "text": "sentry:PAY-9921 OperationalError: remaining connection slots are reserved; first seen 14:05 on payments-api, 312 events, level fatal."
+    }
+  ]
+}

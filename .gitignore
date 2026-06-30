@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Env / secrets
+.env
+*.local
+
+# Cognee local runtime data (NOT backend/data/seed.json, which is committed)
+/data/
+*.duckdb
+*.lance/
+*.kuzu/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+dist/
+npm-debug.log*
+yarn-error.log*
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+
+# Logs
+logs/
+*.log
+
+# Playwright MCP artifacts
+.playwright-mcp/
